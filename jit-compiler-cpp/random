@@ -1,0 +1,33 @@
+configs for near, cities, airports
+integration and unti testing for near
+defines for airport db
+implement for airports
+  define AirportSource class
+  implement AirportSource class
+  define AirportDatabase class
+  implement AirportDatabase class
+  define AirportCredentials
+  implement AirportCredentials
+config find
+find request
+  define
+  implement
+find method in data source
+found method in data source
+register endpoint
+find schema
+
+Collin:
+  Config Management
+  Technical Solution
+Ryan:
+  
+
+Jesse:
+  
+
+Riley:
+  
+
+Scott:
+  
