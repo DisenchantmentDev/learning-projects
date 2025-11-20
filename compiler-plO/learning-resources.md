@@ -1,0 +1,3 @@
+- main article: https://briancallahan.net/blog/20210814.html
+- repo for the article: https://github.com/ibara/pl0c
+- PL/0: https://en.wikipedia.org/wiki/PL/0
