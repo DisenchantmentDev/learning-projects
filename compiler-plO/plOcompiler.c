@@ -1,6 +1,15 @@
 // Complier for PL/O, a simplified version of Pascal, designed by the same person: Niklaus Wirth. 
+#include <sys/stat.h>
+
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <ctype.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <stdarg.h>
+#include <string.h>
+#include <unistd.h>
 
 #define TOK_IDENT 'I'
 #define TOK_NUMBER 'N'
@@ -30,35 +39,14 @@
 #define TOK_LPAREN '('
 #define TOK_RPAREN ')'
 
-char *raw;
+static size_t line = 1;
+static char *raw, *token;
+static int type;
 
-int main(int argc, char *argv[])
-{
-    char *startp;
-
-    if (argc !=2) {
-        (void) fputs("usage: plOc file.plO\n", stderr);
-        exit(1);
-    }
-
-    readin(argv[1]);
-    startp = raw;
-
-    parse();
-
-
-    free(startp);
-
-    return 0;
-}
 
 /*
 * File reading and prepping for lexing
 */
-
-static size_t line = 1;
-static char *raw, *token;
-static int type;
 
 static void
 error(const char *fmt, ...)
@@ -108,18 +96,83 @@ readin(char *file)
 
 /*
 * Lexer
+* All functions that relate to taking in raw input from file and
+* translating that to tokens which can be translated into output code.
+* - Comment(): function for dealing with commented out code
+* - number(): function which handles numerical values. Uses strtonum.c
+* - lex(): the actual lexer. Skips over white space, checks for ident, number, and comment
+*       outputs the token into *raw which is read by the parser.
 */
 
 static void
 comment (void) //method for lexing past comments
 {
-    return;
+    /*
+     * Only currently has functionality for { ... } comments. plO also should support
+     * comments with the {* ... *} format. TODO later. 
+     * Comments can be nested, and you can mix and match opening and closing comment characters.
+     */
+    int ch;
+
+    while ((ch = *raw++) != '}') { //loops to check if the next character is an ending comment character
+        if (ch == '\0') //if we hit the end of the file, a comment was not properly closed
+            error("unterminated comment");
+
+        if (ch == '\n') //move to next line if we hit a new line
+            ++line;
+    }
 }
 
 static int
 ident(void)
 {
-    return 0;
+    char *p;
+    size_t i, len;
+
+    p = raw;
+    /* iterate over the source code until we run into a character that is not a
+     * letter, number, or underscore, generating a word that way. */
+    while (isalnum(*raw) || *raw == '_')
+        ++raw;
+
+    len = raw - p;
+
+    --raw; //revert back a character so we don't skip a token
+
+    free(token); //free token from memory just in case it's been used before
+
+    if ((token = malloc(len + 1)) == NULL)
+        error("malloc failed in token ident");
+
+    for (i = 0; i < len; i++)
+        token[i] = *p++;
+    token[i] = '\0';
+
+    //our lookup table for words
+    if(!strcmp(token, "const"))
+        return TOK_CONST;
+    else if (!strcmp(token, "var"))
+            return TOK_VAR;
+    else if (!strcmp(token, "procedure"))
+            return TOK_PROCEDURE;
+    else if (!strcmp(token, "call"))
+            return TOK_CALL;
+    else if (!strcmp(token, "begin"))
+            return TOK_BEGIN;
+    else if (!strcmp(token, "end"))
+            return TOK_END;
+    else if (!strcmp(token, "if"))
+            return TOK_IF;
+    else if (!strcmp(token, "then"))
+            return TOK_THEN;
+    else if (!strcmp(token, "while"))
+            return TOK_WHILE;
+    else if (!strcmp(token, "do"))
+            return TOK_DO;
+    else if (!strcmp(token, "odd"))
+            return TOK_ODD;
+
+    return TOK_IDENT;
 }
 
 static int
@@ -131,6 +184,47 @@ number(void)
 static int
 lex(void) //lexer function. Just a big switch/case checking the token of each character
 {
+
+again:
+    /* Skipping over whitespace */
+    while (*raw == ' ' || *raw == '\t' || *raw == '\n') {
+        if(*raw++ == '\n')
+            ++line;
+    }
+
+    if(isalpha(*raw) || *raw == '_') // checks if character is a letter/symbol
+        return ident();
+
+    if (isdigit(*raw)) 
+        return number();
+
+     switch (*raw){
+        case '{':
+            comment();
+            goto again;
+        case '.':
+        case '=':
+        case ',':
+        case ';':
+        case '#':
+        case '<':
+        case '>':
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+        case '(':
+        case ')':
+            return (*raw);
+        case ':':
+            if (*++raw != '=')
+                error("unknown token: ':%c'", *raw);
+            return TOK_ASSIGN;
+        case '\0':
+            return 0;
+        default:
+            error("unknown token: '%c'", *raw);
+    }
     return 0;
 }
 
@@ -144,7 +238,28 @@ parse(void)
     return;
 }
 
+/*
+ * main
+*/
+int main(int argc, char *argv[])
+{
+    char *startp;
 
+    if (argc !=2) {
+        (void) fputs("usage: plOc file.plO\n", stderr);
+        exit(1);
+    }
+
+    readin(argv[1]);
+    startp = raw;
+
+    parse();
+
+
+    free(startp);
+
+    return 0;
+}
 
 
 
