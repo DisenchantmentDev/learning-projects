@@ -11,6 +11,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "strtonum.h"
+
 #define TOK_IDENT 'I'
 #define TOK_NUMBER 'N'
 #define TOK_CONST 'C'
@@ -53,7 +55,7 @@ error(const char *fmt, ...)
 {
     va_list ap; //va_list is a struct for error function with variable # of inputs
 
-    fprintf(stderr, "plOc error: %lu: ", line); //print the line w/ error
+    fprintf(stderr, "pl0c error: %lu: ", line); //print the line w/ error
 
     va_start(ap, fmt);
     vfprintf(stderr, fmt, ap); //functions that handle the values in va_list
@@ -67,16 +69,16 @@ error(const char *fmt, ...)
 static void
 readin(char *file)
 {
-    int fd; //file descripter of plO file
+    int fd; //file descripter of pl0 file
     struct stat st; //stat struct describes a struct which stores information about an open file. 
     //Specifics found here: https://pubs.opengroup.org/onlinepubs/009695299/basedefs/sys/stat.h.html
     
     if(strrchr(file, '.') == NULL) //strrchr() loactes the last occurance of a specific character in a string. 
         //In this case, checking if there is a single occurance of '.' in the file name
-        error("file must end in .plO");
+        error("file must end in .pl0");
 
-    if(!!strcmp(strrchr(file, '.'), ".plO"))) //strcmp compares two strings. Checking to see if file properly ends in .plO
-        error("file must end in .plO");
+    if(!!strcmp(strrchr(file, '.'), ".pl0")) //strcmp compares two strings. Checking to see if file properly ends in .pl0
+        error("file must end in .pl0");
 
     if ((fd = open(file, O_RDONLY)) == -1) //checks to see if opening the given file descripter fails. If it does then error, otherwise stores the result in fd
         error("couldn't open %s", file);
@@ -108,7 +110,7 @@ static void
 comment (void) //method for lexing past comments
 {
     /*
-     * Only currently has functionality for { ... } comments. plO also should support
+     * Only currently has functionality for { ... } comments. pl0 also should support
      * comments with the {* ... *} format. TODO later. 
      * Comments can be nested, and you can mix and match opening and closing comment characters.
      */
@@ -148,7 +150,7 @@ ident(void)
         token[i] = *p++;
     token[i] = '\0';
 
-    //our lookup table for words
+    /* Table that checks if our token is a reserved word. If not, then it's an identifier*/
     if(!strcmp(token, "const"))
         return TOK_CONST;
     else if (!strcmp(token, "var"))
@@ -178,7 +180,37 @@ ident(void)
 static int
 number(void)
 {
-    return 0;
+    const char *errstr;
+    char *p;
+    size_t i, j = 0, len;
+
+    p = raw;
+    /* Allowing the user to use an underscore as a decimal seperator. */
+    while (isdigit(*raw) || *raw == '_')
+        ++raw;
+
+    len = raw - p;
+
+    free(token);
+
+    if((token = malloc(len + 1)) == NULL)
+        error("malloc failed in number toden ident");
+
+    for (i = 0; i < len; i++) {
+        if (isdigit(*p))
+            token[j++] = *p;
+        ++p;
+    }
+    token[j] = '\0';
+
+    /* strtonum is a function found in OpenBSD but is included in this project
+     * as well. We cast the result to void because we don't actually care about
+     * the result, we just want to verify the token. */
+    (void) strtonum(token, 0, LONG_MAX, &errstr);
+    if (errstr != NULL) 
+        error("invalid number: %s", token);
+
+    return TOK_NUMBER;
 }
 
 static int
@@ -192,9 +224,11 @@ again:
             ++line;
     }
 
-    if(isalpha(*raw) || *raw == '_') // checks if character is a letter/symbol
+    /* Checks if a alphanumeric token is a reserved word or identifier.*/
+    if(isalpha(*raw) || *raw == '_') 
         return ident();
 
+    /* Simply lexes numbers. We also allow for underscores to seperate numbers. */
     if (isdigit(*raw)) 
         return number();
 
@@ -229,13 +263,55 @@ again:
 }
 
 /*
-* parser
+* Parser. Takes the lexer's output and turns it into a string of tokens
+* For now, just spits things out to stdout as a testing tool
 */
 
 static void
 parse(void)
 {
-    return;
+    /* Loop that continues for as long as lex does not return 0 */
+    while((type = lex()) != 0) {
+        ++raw;
+        /* Prints to stdout the line number and the type of the character */
+        (void) fprintf(stdout, "%lu|%d\t", line, type);
+        /* Lookup table so we know how to print out to stdout */
+        switch (type) {
+            case TOK_IDENT:
+            case TOK_NUMBER:
+            case TOK_CONST:
+            case TOK_VAR:
+            case TOK_PROCEDURE:
+            case TOK_CALL:
+            case TOK_BEGIN:
+            case TOK_END:
+            case TOK_IF:
+            case TOK_THEN:
+            case TOK_WHILE:
+            case TOK_DO:
+            case TOK_ODD:
+                (void) fprintf(stdout, "%s", token); //standard formatted output to stream
+                break;
+            case TOK_DOT:
+            case TOK_EQUAL:
+            case TOK_COMMA:
+            case TOK_SEMICOLON:
+            case TOK_HASH:
+            case TOK_LESSTHAN:
+            case TOK_GREATERTHAN:
+            case TOK_PLUS:
+            case TOK_MINUS:
+            case TOK_MULTIPLY:
+            case TOK_DIVIDE:
+            case TOK_LPAREN:
+            case TOK_RPAREN:
+                (void) fputc(type, stdout); //fputc for putting a single character into the stream
+                break;
+            case TOK_ASSIGN:
+                (void) fputs(":=", stdout); //fputs for putting a null-terminated string into the stream
+        }
+        (void) fputc('\n', stdout);
+    }
 }
 
 /*
@@ -246,7 +322,7 @@ int main(int argc, char *argv[])
     char *startp;
 
     if (argc !=2) {
-        (void) fputs("usage: plOc file.plO\n", stderr);
+        (void) fputs("usage: pl0c file.pl0\n", stderr);
         exit(1);
     }
 
