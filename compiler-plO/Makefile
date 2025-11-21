@@ -5,8 +5,7 @@ TARGET := pl0c
 IDIR := -I include
 SDIR := source
 ODIR := lbuild
-CFILES := source/main.c source/lex.c source/strtonum.c
-# CFILES := $(wildcard $(SDIR)/*.c)
+CFILES := $(wildcard $(SDIR)/*.c)
 OBJECTS := $(patsubst $(SDIR)/%.c, $(ODIR)/%.o, $(CFILES))
 CFLAGS := $(IDIR) -fms-extensions -Ofast -DLIN
 
