@@ -1,5 +1,4 @@
-#ifndef STREAM_H_DEFINED
-#define STREAM_H_DEFINED
+#pragma once
 
 #include <errno.h>
 #include <limits.h>
@@ -9,4 +8,3 @@ long long
 strtonum(const char *numstr, long long minval, long long maxval,
     const char **errstrp);
 
-#endif
