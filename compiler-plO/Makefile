@@ -1,20 +1,27 @@
 # pl0c Makefile
 
-CC = gcc
-TARGET = pl0c
-OBJECTS = pl0c.o strtonum.o
+CC := gcc
+TARGET := pl0c
+IDIR := -I include
+SDIR := source
+ODIR := lbuild
+CFILES := source/main.c source/lex.c source/strtonum.c
+# CFILES := $(wildcard $(SDIR)/*.c)
+OBJECTS := $(patsubst $(SDIR)/%.c, $(ODIR)/%.o, $(CFILES))
+CFLAGS := $(IDIR) -fms-extensions -Ofast -DLIN
 
-$(TARGET): $(OBJECTS)
-	$(CC) -o $(TARGET) $(OBJECTS)
+$(TARGET): $(ODIR) $(OBJECTS)
+	$(CC) $(ODIR)/*.o -o $@
 
-pl0c.o: pl0c.c
-	$(CC) -c pl0c.c
+$(ODIR)/%.o: $(SDIR)/%.c
+	$(CC) -c -o $@ $< $(CFLAGS)
 
-strtonum.o: strtonum.c strtonum.h 
-	$(CC) -c strtonum.c
+$(ODIR):
+	@mkdir $@
 
 clean:
-	rm -f *.o *- ${TARGET}
+	rm -f *- ${TARGET}
+	rm -rf ./$(ODIR)
 
 #CC ?=		cc
 #CFLAGS ?=	-g -O2
