@@ -268,7 +268,7 @@ again:
 */
 
 static void
-parse(void)
+parse_print(void)
 {
     /* Loop that continues for as long as lex does not return 0 */
     while((type = lex()) != 0) {
@@ -315,6 +315,45 @@ parse(void)
 }
 
 /*
+ * Parser implementation and it's relevant helper functions.
+ * - next(): controls the lexer by telling it when to move to next token
+ * - expect(int): expects proper syntax depending on what is returned from lexer
+ * - 
+ */
+
+static void
+next(void)
+{
+
+    type = lex();
+    ++raw;
+
+}
+
+static void
+expect(int match)
+{
+
+    if (match != type)
+        error("syntax error");
+
+    next();
+}
+
+static void
+parse(void)
+{
+
+    next();
+    block();
+    expect(TOK_DOT);
+
+    if (type != 0)
+        error("extra tokens at end of file");
+
+}
+
+/*
  * main
 */
 int main(int argc, char *argv[])
@@ -329,7 +368,7 @@ int main(int argc, char *argv[])
     readin(argv[1]);
     startp = raw;
 
-    parse();
+    parse_print();
 
 
     free(startp);
