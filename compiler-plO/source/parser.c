@@ -12,6 +12,7 @@
 
 #include "main.h"
 #include "lex.h"
+#include "code_gen.h"
 
 #include "parser.h"
 
@@ -19,7 +20,13 @@
  * Parser implementation and it's relevant helper functions.
  * - next(): controls the lexer by telling it when to move to next token
  * - expect(int): expects proper syntax depending on what is returned from lexer
+ * - factor(): checks if left or right side of mathematical expression is a value we can operate on
+ * - term(): checks validity of both left and right terms
+ * - expression(): checks validity of mathematical expression
+ * - condition(): checks validity of conditional expression
+ * - statement(): identifies full statements and checks validity
  * - block(): function that processes the given block of code
+ * - parse(): function that is called by main to begin parsing
  */
 
 static void
@@ -37,7 +44,7 @@ expect(int match)
 {
 
     if (match != type)
-        error("syntax error");
+        error("syntax error, expected token '%c'\n\tActually found '%c'", (char)match, (char)type);
 
     next();
 }
@@ -53,8 +60,8 @@ factor(void)
             break;
         case TOK_LPAREN:
             expect(TOK_LPAREN);
-        expression();
-        expect(TOK_RPAREN);
+            expression();
+            expect(TOK_RPAREN);
     }
 }
 
@@ -167,13 +174,14 @@ block(void)
         expect(TOK_SEMICOLON);
     }
 
-    if (type = TOK_VAR) {
+    if (type == TOK_VAR) {
         expect(TOK_VAR);
         expect(TOK_IDENT);
         while (type == TOK_COMMA) {
             expect(TOK_COMMA);
             expect(TOK_IDENT);
         }
+        expect(TOK_SEMICOLON);
     }
 
     while (type == TOK_PROCEDURE) {
@@ -204,4 +212,5 @@ parse(void)
     if (type != 0)
         error("extra tokens at end of file");
 
+    cg_end();
 }

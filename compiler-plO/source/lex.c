@@ -109,6 +109,8 @@ number(void)
 
     len = raw - p;
 
+    --raw;
+
     free(token);
 
     if((token = malloc(len + 1)) == NULL)

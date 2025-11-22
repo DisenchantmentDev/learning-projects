@@ -13,6 +13,8 @@
 
 #include "strtonum.h"
 #include "lex.h"
+#include "parser.h"
+#include "code_gen.h"
 
 #include "main.h"
 
@@ -178,7 +180,8 @@ int main(int argc, char *argv[])
     readin(argv[1]);
     startp = raw;
 
-    parse_print();
+    //parse_print();
+    parse();
 
 
     free(startp);
