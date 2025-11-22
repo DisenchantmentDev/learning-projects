@@ -35,6 +35,15 @@ aout(const char *fmt, ...)
 }
 
 void
+cg_const(void)
+{
+    aout("const long %s=", token);
+}
+
+void
+cg_semicolon(void);
+
+void
 cg_end(void)
 {
     aout("/* PL/0 compiler %s */\n", PL0C_VERSION);
