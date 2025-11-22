@@ -18,7 +18,7 @@
 
 size_t line = 1;
 char *raw, *token;
-int type;
+int depth, type;
 
 /*
 * File reading and prepping for lexing

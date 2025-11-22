@@ -11,6 +11,7 @@
 
 #include "main.h"
 #include "strtonum.h"
+#include "parser.h"
 
 #include "lex.h"
 /*
