@@ -4,7 +4,7 @@
 #define TOK_NUMBER 'N'
 #define TOK_CONST 'C'
 #define TOK_VAR 'V'
-#define TOK_PROCEDURE 'P'
+#define TOK_PROCEDURE 'p'
 #define TOK_CALL 'c'
 #define TOK_BEGIN 'B'
 #define TOK_END 'E'
@@ -27,6 +27,8 @@
 #define TOK_DIVIDE '/'
 #define TOK_LPAREN '('
 #define TOK_RPAREN ')'
+
+#define PL0C_VERSION "0.1"
 
 void error(const char *fmt, ...);
 
