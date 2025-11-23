@@ -22,6 +22,15 @@ size_t line = 1;
 char *raw, *token;
 int depth, type;
 
+struct symtab {
+    int depth;
+    int type;
+    char *name;
+    struct symtab *next;
+};
+
+struct symtab *head;
+
 /*
 * File reading and prepping for lexing
 */
@@ -180,8 +189,8 @@ int main(int argc, char *argv[])
     readin(argv[1]);
     startp = raw;
 
-    //parse_print();
-    parse();
+    parse_print();
+    //parse();
 
 
     free(startp);

@@ -4,6 +4,9 @@ extern size_t line;
 extern char *raw, *token;
 extern int depth, type;
 
+extern struct symtab;
+extern struct symtab *head;
+
 static void aout(const char *fmt, ...);
 void cg_const(void);
 void cg_semicolon(void);

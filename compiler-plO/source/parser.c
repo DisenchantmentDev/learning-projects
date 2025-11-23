@@ -162,13 +162,27 @@ block(void)
 
     if (type == TOK_CONST) {
         expect(TOK_CONST);
+        if (type == TOK_IDENT)
+            addsymbol(TOK_CONST);
+            cg_const();
         expect(TOK_IDENT);
         expect(TOK_EQUAL);
+        if (type == TOK_NUMBER) {
+            cg_symbol();
+            cg_semicolon();
+        }
         expect(TOK_NUMBER);
         while (type == TOK_COMMA) {
             expect(TOK_COMMA);
+            if (type == TOK_COMMA)
+                addsymbol(TOK_CONST);
+                cg_const();
             expect(TOK_IDENT);
             expect(TOK_EQUAL);
+            if (type == TOK_NUMBER) {
+                cg_symbol();
+                cg_semicolon();
+            }
             expect(TOK_NUMBER);
         }
         expect(TOK_SEMICOLON);
