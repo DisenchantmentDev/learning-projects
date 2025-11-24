@@ -1,0 +1,70 @@
+[
+  {
+    "arguments": [
+      "/usr/sbin/gcc",
+      "-c",
+      "-I",
+      "include",
+      "-fms-extensions",
+      "-Ofast",
+      "-DLIN",
+      "-o",
+      "lbuild/lex.o",
+      "src/lex.c"
+    ],
+    "directory": "E:\Programming\learning-projects\compiler-plO",
+    "file": "E:\Programming\learning-projects\compiler-plO\src\lex.c",
+    "output": "E:\Programming\learning-projects\compiler-plO\lbuild\lex.o"
+  },
+  {
+    "arguments": [
+      "/usr/sbin/gcc",
+      "-c",
+      "-I",
+      "include",
+      "-fms-extensions",
+      "-Ofast",
+      "-DLIN",
+      "-o",
+      "lbuild/main.o",
+      "src/main.c"
+    ],
+    "directory": "E:\Programming\learning-projects\compiler-plO",
+    "file": "E:\Programming\learning-projects\compiler-plO\src\main.c",
+    "output": "E:\Programming\learning-projects\compiler-plO\lbuild\main.o"
+  },
+  {
+    "arguments": [
+      "/usr/sbin/gcc",
+      "-c",
+      "-I",
+      "include",
+      "-fms-extensions",
+      "-Ofast",
+      "-DLIN",
+      "-o",
+      "lbuild/parser.o",
+      "src/parser.c"
+    ],
+    "directory": "E:\Programming\learning-projects\compiler-plO",
+    "file": "E:\Programming\learning-projects\compiler-plO\src\parser.c"
+    "output": "E:\Programming\learning-projects\compiler-plO\lbuild\parser.o""
+  },
+  {
+    "arguments": [
+      "/usr/sbin/gcc",
+      "-c",
+      "-I",
+      "include",
+      "-fms-extensions",
+      "-Ofast",
+      "-DLIN",
+      "-o",
+      "lbuild/strtonum.o",
+      "src/strtonum.c"
+    ],
+    "directory": "E:\Programming\learning-projects\compiler-plO",
+    "file": "E:\Programming\learning-projects\compiler-plO\src\strtonum.c"
+    "output": "E:\Programming\learning-projects\compiler-plO\lbuild\strtonum.o"
+  }
+]

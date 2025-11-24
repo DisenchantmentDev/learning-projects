@@ -3,7 +3,7 @@
 CC := gcc
 TARGET := pl0c
 IDIR := -I include
-SDIR := source
+SDIR := src
 ODIR := lbuild
 CFILES := $(wildcard $(SDIR)/*.c)
 OBJECTS := $(patsubst $(SDIR)/%.c, $(ODIR)/%.o, $(CFILES))
