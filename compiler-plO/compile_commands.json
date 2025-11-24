@@ -1,10 +1,9 @@
 [
   {
     "arguments": [
-      "/usr/sbin/gcc",
+      "/usr/bin/gcc",
       "-c",
-      "-I",
-      "include",
+      "-Iinclude",
       "-fms-extensions",
       "-Ofast",
       "-DLIN",
@@ -12,16 +11,15 @@
       "lbuild/lex.o",
       "src/lex.c"
     ],
-    "directory": "E:\Programming\learning-projects\compiler-plO",
-    "file": "E:\Programming\learning-projects\compiler-plO\src\lex.c",
-    "output": "E:\Programming\learning-projects\compiler-plO\lbuild\lex.o"
+    "directory": "/home/disenchantment/programming/learning-projects/compiler-plO",
+    "file": "/home/disenchantment/programming/learning-projects/compiler-plO/src/lex.c",
+    "output": "/home/disenchantment/programming/learning-projects/compiler-plO/lbuild/lex.o"
   },
   {
     "arguments": [
-      "/usr/sbin/gcc",
+      "/usr/bin/gcc",
       "-c",
-      "-I",
-      "include",
+      "-Iinclude",
       "-fms-extensions",
       "-Ofast",
       "-DLIN",
@@ -29,16 +27,15 @@
       "lbuild/main.o",
       "src/main.c"
     ],
-    "directory": "E:\Programming\learning-projects\compiler-plO",
-    "file": "E:\Programming\learning-projects\compiler-plO\src\main.c",
-    "output": "E:\Programming\learning-projects\compiler-plO\lbuild\main.o"
+    "directory": "/home/disenchantment/programming/learning-projects/compiler-plO",
+    "file": "/home/disenchantment/programming/learning-projects/compiler-plO/src/main.c",
+    "output": "/home/disenchantment/programming/learning-projects/compiler-plO/lbuild/main.o"
   },
   {
     "arguments": [
-      "/usr/sbin/gcc",
+      "/usr/bin/gcc",
       "-c",
-      "-I",
-      "include",
+      "-Iinclude",
       "-fms-extensions",
       "-Ofast",
       "-DLIN",
@@ -46,16 +43,15 @@
       "lbuild/parser.o",
       "src/parser.c"
     ],
-    "directory": "E:\Programming\learning-projects\compiler-plO",
-    "file": "E:\Programming\learning-projects\compiler-plO\src\parser.c"
-    "output": "E:\Programming\learning-projects\compiler-plO\lbuild\parser.o""
+    "directory": "/home/disenchantment/programming/learning-projects/compiler-plO",
+    "file": "/home/disenchantment/programming/learning-projects/compiler-plO/src/parser.c",
+    "output": "/home/disenchantment/programming/learning-projects/compiler-plO/lbuild/parser.o"
   },
   {
     "arguments": [
-      "/usr/sbin/gcc",
+      "/usr/bin/gcc",
       "-c",
-      "-I",
-      "include",
+      "-Iinclude",
       "-fms-extensions",
       "-Ofast",
       "-DLIN",
@@ -63,8 +59,8 @@
       "lbuild/strtonum.o",
       "src/strtonum.c"
     ],
-    "directory": "E:\Programming\learning-projects\compiler-plO",
-    "file": "E:\Programming\learning-projects\compiler-plO\src\strtonum.c"
-    "output": "E:\Programming\learning-projects\compiler-plO\lbuild\strtonum.o"
+    "directory": "/home/disenchantment/programming/learning-projects/compiler-plO",
+    "file": "/home/disenchantment/programming/learning-projects/compiler-plO/src/strtonum.c",
+    "output": "/home/disenchantment/programming/learning-projects/compiler-plO/lbuild/strtonum.o"
   }
 ]

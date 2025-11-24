@@ -2,7 +2,7 @@
 
 CC := gcc
 TARGET := pl0c
-IDIR := -I include
+IDIR := -Iinclude
 SDIR := src
 ODIR := lbuild
 CFILES := $(wildcard $(SDIR)/*.c)
