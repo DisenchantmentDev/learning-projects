@@ -1,2 +1,0 @@
-- Writing minimal JIT compiler part 1: https://solarianprogrammer.com/2018/01/10/writing-minimal-x86-64-jit-compiler-cpp/
-- Writing minimal JIT compiler part 2: https://solarianprogrammer.com/2018/01/12/writing-minimal-x86-64-jit-compiler-cpp-part-2/
