@@ -8,7 +8,6 @@
 
 #include "main.h"
 #include "parser.h"
-#include "strtonum.h"
 
 #include "code_gen.h"
 
@@ -84,11 +83,21 @@ cg_strtonum (void)
     aout ("#define	INVALID		1\n");
     aout ("#define	TOOSMALL		2\n");
     aout ("#define	TOOLARGE		3\n\n");
-    aout ("long long\nstrtonum(const char *numstr, long long minval, long "
-          "long maxval, const char **errstrp)\n{long long ll = 0;\nint error "
-          "= 0;\nchar *ep;\nstruct errval {const char *errstr; int err;} "
-          "ev[4] = {\n{NULL, 0},\n{\"invalid\",EINVAL},\n{\"too small\", "
-          "ERANGE},\n{\"too large\", ERANGE},};");
+    aout (
+        "long long\nstrtonum(const char *numstr, long long minval, long "
+        "long maxval, const char **errstrp)\n{long long ll = 0;\nint error "
+        "= 0;\nchar *ep;\nstruct errval {const char *errstr; int err;} "
+        "ev[4] = {\n{NULL, 0},\n{\"invalid\",EINVAL},\n{\"too small\", "
+        "ERANGE},\n{\"too large\", "
+        "ERANGE},};\nev[0].err=errno;errno=0;\nif(minval>maxval){\nerror="
+        "INVALID;\n} else "
+        "{\nll=strtoll(numstr,&ep,10);\nif(numstr==ep||*ep!='\0')\nerror="
+        "INVALID;\nelse if "
+        "((ll==LLONG_MIN&&errno==ERANGE)||ll<minval)\nerror==TOOSMALL;\nelse "
+        "if "
+        "((ll==LLONG_MAX&&errno==ERANGE||ll>maxval)\nerror=TOOLARGE;\n}\nif("
+        "errstrp!=NULL)\n*errstrp=ev[error].errstr;\nerrno=ev[error].errstr;"
+        "\nif(error)\nll=0n;\nreturn(ll);");
 }
 
 void
@@ -99,6 +108,7 @@ cg_init ()
     aout ("#include <stdlib.h>\n");
     aout ("#include <stdio.h>\n\n");
     aout ("static char __stdin[24];\n\n");
+    aout ("static const char *__errstr");
     cg_strtonum ();
 }
 
@@ -129,6 +139,15 @@ cg_writechar (void)
 void
 cg_readint (void)
 {
+    aout ("(void) fgets(__stdin, sizeof(__stdin), stdin);\n");
+    aout ("if(__stdin[strlen(__stdin) - 1] == '\\n')");
+    aout ("__stdin[strlen(__stdin) - 1] = '\\0';");
+    aout ("%s=(long) strtonum(__stdin, LONG_MIN, LONG_MAX, &__errstr);\n",
+          token);
+    aout ("if(__errstr!=NULL){");
+    aout ("(void) fprintf(stderr, \"invalid number: %%s\\n\", __stdin);");
+    aout ("exit(1);");
+    aout ("}");
 }
 
 void
