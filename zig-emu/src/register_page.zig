@@ -71,4 +71,36 @@ pub const RegisterPage = struct {
             },
         }
     }
+
+    pub fn check_z(self: RegisterPage) bool {
+        return self.flags.bitflags.check(bitflags.flags.Z);
+    }
+
+    pub fn check_n(self: RegisterPage) bool {
+        return self.flags.bitflags.check(bitflags.flags.N);
+    }
+
+    pub fn check_h(self: RegisterPage) bool {
+        return self.flags.bitflags.check(bitflags.flags.H);
+    }
+
+    pub fn check_c(self: RegisterPage) bool {
+        return self.flags.bitflags.check(bitflags.flags.C);
+    }
+
+    pub fn set_z(self: *RegisterPage, z: bool) void {
+        self.flags.set(bitflags.flags.Z, z);
+    }
+
+    pub fn set_n(self: *RegisterPage, n: bool) void {
+        self.flags.set(bitflags.flags.N, n);
+    }
+
+    pub fn set_h(self: *RegisterPage, h: bool) void {
+        self.flags.set(bitflags.flags.H, h);
+    }
+
+    pub fn set_c(self: *RegisterPage, c: bool) void {
+        self.flags.set(bitflags.flags.C, c);
+    }
 };
