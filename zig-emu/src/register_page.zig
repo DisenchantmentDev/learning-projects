@@ -3,7 +3,7 @@ const bitflags = @import("bitflags.zig");
 
 const r8 = enum { A, B, C, D, E, F, H, L };
 
-const r16 = enum { AF, BC, DE, HL, SP };
+pub const r16 = enum { AF, BC, DE, HL, SP };
 
 pub const RegisterPage = struct {
     a: u8,
@@ -69,6 +69,32 @@ pub const RegisterPage = struct {
                 self.h = @as(u8, val >> 8);
                 self.l = @truncate(val);
             },
+        }
+    }
+
+    pub fn read8(self: RegisterPage, reg: r8) u8 {
+        return switch (reg) {
+            r8.A => self.a,
+            r8.B => self.b,
+            r8.C => self.c,
+            r8.D => self.d,
+            r8.E => self.e,
+            r8.F => self.f.bits(),
+            r8.H => self.h,
+            r8.L => self.l,
+        };
+    }
+
+    pub fn write8(self: *RegisterPage, reg: r8, val: u8) void {
+        switch (reg) {
+            r8.A => self.a = val,
+            r8.B => self.b = val,
+            r8.C => self.c = val,
+            r8.D => self.d = val,
+            r8.E => self.e = val,
+            r8.F => self.f.set_from_bits(val),
+            r8.H => self.h = val,
+            r8.L => self.l = val,
         }
     }
 

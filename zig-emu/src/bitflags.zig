@@ -43,6 +43,10 @@ pub const bitflags = struct {
     pub fn bits(self: bitflags) u8 {
         return self.B;
     }
+
+    pub fn set_from_bits(self: *bitflags, val: u8) void {
+        self.B = val;
+    }
 };
 
 test "bitflags_test_1" {
