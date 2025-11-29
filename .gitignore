@@ -5,3 +5,4 @@
 /compiler-plO/.cache/*
 /compiler-plO/.ccls-cache/*
 /zig-emu/.zig-cache/*
+/zig-emu/zig-out/*
