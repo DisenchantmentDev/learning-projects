@@ -7,5 +7,6 @@ extern char *raw, *token;
 extern int depth, type, proc;
 extern struct symtab *head;
 
+void initsymtab (void);
 static void expression (void);
 void parse (void);

@@ -10,7 +10,7 @@ OBJECTS := $(patsubst $(SDIR)/%.c, $(ODIR)/%.o, $(CFILES))
 CFLAGS := $(IDIR) -fms-extensions -Ofast -DLIN
 
 $(TARGET): $(ODIR) $(OBJECTS)
-	$(CC) $(ODIR)/*.o -o $@
+	$(CC) $(ODIR)/*.o -o $@ -lbsd
 
 $(ODIR)/%.o: $(SDIR)/%.c
 	$(CC) -c -o $@ $< $(CFLAGS)

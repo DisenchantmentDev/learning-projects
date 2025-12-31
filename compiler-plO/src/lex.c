@@ -1,3 +1,4 @@
+#include <bsd/stdlib.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 
@@ -10,7 +11,7 @@
 
 #include "main.h"
 #include "parser.h"
-#include "strtonum.h"
+// #include "strtonum.h"
 
 #include "lex.h"
 /*

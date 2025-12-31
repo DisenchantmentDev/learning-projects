@@ -165,12 +165,13 @@ main (int argc, char *argv[])
         }
 
     readin (argv[1]);
-    startp = raw;
+    // startp = raw;
+    initsymtab ();
 
-    //parse_print ();
-    parse();
+    // parse_print ();
+    parse ();
 
-    free (startp);
+    // free (startp);
 
     return 0;
 }

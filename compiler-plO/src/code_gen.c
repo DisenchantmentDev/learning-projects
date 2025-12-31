@@ -71,45 +71,17 @@ symcheck (int check)
         }
 }
 
-/* Function for initializing the table that tracks symbols we're writing.
- * This is done via a struct "symtab" (defined in main) that stores
- * information such as function depth, token type, symbol name (think
- * of it like the scope of the symbol aka what function is it in), and the next
- * tab (singly linked list for simplicity). */
-
-static void
-cg_strtonum (void)
-{
-    aout ("#define	INVALID		1\n");
-    aout ("#define	TOOSMALL		2\n");
-    aout ("#define	TOOLARGE		3\n\n");
-    aout (
-        "long long\nstrtonum(const char *numstr, long long minval, long "
-        "long maxval, const char **errstrp)\n{long long ll = 0;\nint error "
-        "= 0;\nchar *ep;\nstruct errval {const char *errstr; int err;} "
-        "ev[4] = {\n{NULL, 0},\n{\"invalid\",EINVAL},\n{\"too small\", "
-        "ERANGE},\n{\"too large\", "
-        "ERANGE},};\nev[0].err=errno;errno=0;\nif(minval>maxval){\nerror="
-        "INVALID;\n} else "
-        "{\nll=strtoll(numstr,&ep,10);\nif(numstr==ep||*ep!='\0')\nerror="
-        "INVALID;\nelse if "
-        "((ll==LLONG_MIN&&errno==ERANGE)||ll<minval)\nerror==TOOSMALL;\nelse "
-        "if "
-        "((ll==LLONG_MAX&&errno==ERANGE||ll>maxval)\nerror=TOOLARGE;\n}\nif("
-        "errstrp!=NULL)\n*errstrp=ev[error].errstr;\nerrno=ev[error].errstr;"
-        "\nif(error)\nll=0n;\nreturn(ll);");
-}
-
 void
 cg_init ()
 {
     aout ("#include <errno.h>\n");
     aout ("#include <limits.h>\n");
     aout ("#include <stdlib.h>\n");
+    aout ("#include <bsd/stdlib.h>\n");
     aout ("#include <stdio.h>\n\n");
-    aout ("static char __stdin[24];\n\n");
-    aout ("static const char *__errstr");
-    cg_strtonum ();
+    aout ("static char __stdin[24];\n");
+    aout ("static const char *__errstr;\n\n");
+    // cg_strtonum ();
 }
 
 void
@@ -187,7 +159,7 @@ cg_procedure (void)
             aout ("void\n");
             aout ("%s(void)\n", token);
         }
-    aout ("\n");
+    aout ("{\n");
 }
 
 void
@@ -207,13 +179,17 @@ cg_symbol (void)
     switch (type)
         {
         case TOK_IDENT:
+        case TOK_NUMBER:
             aout ("%s", token);
             break;
-        case TOK_NUMBER:
+        case TOK_BEGIN:
             aout ("{\n");
             break;
         case TOK_END:
             aout (";\n}\n");
+            break;
+        case TOK_IF:
+            aout ("if(");
             break;
         case TOK_THEN:
         case TOK_DO:

@@ -65,7 +65,7 @@ addsymbol (int type)
         }
 
     if ((new = malloc (sizeof (struct symtab))) == NULL)
-        error ("malloc of symtab failed");
+        error ("malloc failed");
 
     new->depth = depth - 1;
     new->type = type;
@@ -101,7 +101,6 @@ again:
 static void
 next (void)
 {
-
     type = lex ();
     ++raw;
 }
@@ -110,7 +109,6 @@ next (void)
 static void
 expect (int match)
 {
-
     if (match != type)
         error ("syntax error, expected token '%c'\n\tActually found '%c'",
                (char)match, (char)type);
@@ -121,7 +119,6 @@ expect (int match)
 static void
 factor (void)
 {
-
     switch (type)
         {
         case TOK_IDENT:
@@ -159,12 +156,16 @@ expression (void)
 {
 
     if (type == TOK_PLUS || type == TOK_MINUS)
-        next ();
+        {
+            cg_symbol ();
+            next ();
+        }
 
     term ();
 
     while (type == TOK_PLUS || type == TOK_MINUS)
         {
+            cg_symbol ();
             next ();
             term ();
         }
@@ -258,21 +259,6 @@ statement (void)
             expect (TOK_DO);
             statement ();
             break;
-        case TOK_WRITECHAR:
-            expect (TOK_WRITECHAR);
-            if (type == TOK_IDENT || type == TOK_NUMBER)
-                {
-                    if (type == TOK_IDENT)
-                        symcheck (CHECK_RHS);
-                    cg_writechar ();
-                }
-            if (type == TOK_IDENT)
-                expect (TOK_IDENT);
-            else if (type == TOK_NUMBER)
-                expect (TOK_NUMBER);
-            else
-                error ("writeChar requires a number or identifier");
-            break;
         case TOK_WRITEINT:
             expect (TOK_WRITEINT);
             if (type == TOK_IDENT || type == TOK_NUMBER)
@@ -281,12 +267,31 @@ statement (void)
                         symcheck (CHECK_RHS);
                     cg_writeint ();
                 }
+
             if (type == TOK_IDENT)
                 expect (TOK_IDENT);
             else if (type == TOK_NUMBER)
                 expect (TOK_NUMBER);
             else
-                error ("writeInt requires a number or identifier");
+                error ("writeInt takes an identifier or a number");
+
+            break;
+        case TOK_WRITECHAR:
+            expect (TOK_WRITECHAR);
+            if (type == TOK_IDENT || type == TOK_NUMBER)
+                {
+                    if (type == TOK_IDENT)
+                        symcheck (CHECK_RHS);
+                    cg_writechar ();
+                }
+
+            if (type == TOK_IDENT)
+                expect (TOK_IDENT);
+            else if (type == TOK_NUMBER)
+                expect (TOK_NUMBER);
+            else
+                error ("writeChar takes an identifier or a number");
+
             break;
         case TOK_READINT:
             expect (TOK_READINT);
@@ -300,6 +305,7 @@ statement (void)
                 }
 
             expect (TOK_IDENT);
+
             break;
         case TOK_READCHAR:
             expect (TOK_READCHAR);
@@ -313,7 +319,6 @@ statement (void)
                 }
 
             expect (TOK_IDENT);
-            break;
         }
 }
 
@@ -321,7 +326,7 @@ static void
 block (void)
 {
 
-    if (depth++ > 3)
+    if (depth++ > 1)
         error ("nesting depth exceeded");
 
     if (type == TOK_CONST)
@@ -365,7 +370,7 @@ block (void)
             expect (TOK_VAR);
             if (type == TOK_IDENT)
                 {
-                    addsymbol (TOK_IDENT);
+                    addsymbol (TOK_VAR);
                     cg_var ();
                 }
             expect (TOK_IDENT);
@@ -374,7 +379,7 @@ block (void)
                     expect (TOK_COMMA);
                     if (type == TOK_IDENT)
                         {
-                            addsymbol (TOK_IDENT);
+                            addsymbol (TOK_VAR);
                             cg_var ();
                         }
                     expect (TOK_IDENT);
@@ -386,10 +391,11 @@ block (void)
     while (type == TOK_PROCEDURE)
         {
             proc = 1;
+
             expect (TOK_PROCEDURE);
             if (type == TOK_IDENT)
                 {
-                    addsymbol (TOK_IDENT);
+                    addsymbol (TOK_PROCEDURE);
                     cg_procedure ();
                 }
             expect (TOK_IDENT);
@@ -409,13 +415,16 @@ block (void)
 
     statement ();
 
+    cg_epilogue ();
+
     if (--depth < 0)
-        error ("nesting depth less than 0");
+        error ("nesting depth fell below 0");
 }
 
 void
 parse (void)
 {
+    cg_init ();
 
     next ();
     block ();
