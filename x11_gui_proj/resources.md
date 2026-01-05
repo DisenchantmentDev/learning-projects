@@ -1,0 +1,3 @@
+- Simple x11 tutorial: https://www.youtube.com/watch?v=d2E7ryHCK08
+- Error handling: https://youtu.be/A9bPqlgbUvg?si=9yA0p4KVOgyMHcol
+- muukid: https://youtu.be/jGl_nZ7V0wE?si=cS2clguIE6COaZVj

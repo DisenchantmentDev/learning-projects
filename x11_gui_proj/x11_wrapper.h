@@ -1,3 +1,6 @@
+/* Inspired by Muukid's "Software from Scratch" videos on youtube
+ * A library that acts as an X11 wrapper. Purely an experimental
+ * project that is meant to learn X11. */
 #ifndef x11_wrapper
 #define x11_wrapper
 
@@ -6,16 +9,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef XWDEF
+#define XWDEF static inline
+#endif /* XWDEF */
+
 typedef struct
 {
     XEvent event;
     Display *display;
     Window w;
 } xw_context;
-
-#ifndef XWDEF
-#define XWDEF static inline
-#endif /* XWDEF */
 
 XWDEF void XW_init_basic_window (xw_context *ctx, int x_size, int y_size);
 
