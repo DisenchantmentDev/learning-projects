@@ -115,11 +115,11 @@ main ()
     int total = 0;
     for (size_t i = 0; i < inv.count; ++i)
         {
-            int item = inv.items[i];
+            long item = inv.items[i];
             for (size_t j = 0; j < ranges.count; ++j)
                 {
-                    int a = ranges.items[j].start;
-                    int b = ranges.items[j].end;
+                    long a = ranges.items[j].start;
+                    long b = ranges.items[j].end;
                     if (item >= a && item <= b)
                         {
                             ++total;
