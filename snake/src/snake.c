@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define PLAY_SIZE 500
 #define CELL_SIZE 20.0
@@ -16,16 +17,42 @@ typedef struct
 
 typedef struct
 {
+    Vector2 pos;
+    bool is_present;
+} Apple;
+
+typedef struct
+{
     int frame_count;
     int cached_key;
     Snake snake;
-    bool apple_present;
+    Apple apple;
 } Game_Ctx;
 
 void
-gen_apple(Game_Ctx *game)
+gen_apple (Game_Ctx *game)
 {
-    return;
+    if (!game->apple.is_present)
+        {
+            int new_x = rand () % PLAY_SIZE + 1;
+            int new_y = rand () % PLAY_SIZE + 1;
+            /* snap to the nearest coordinate, rounded down always */
+            game->apple.pos.x = (int)(new_x / 20) * CELL_SIZE;
+            game->apple.pos.y = (int)(new_y / 20) * CELL_SIZE;
+            game->apple.is_present = true;
+        }
+}
+
+bool
+has_eaten (Game_Ctx *game)
+{
+    if (game->snake.head_pos.x == game->apple.pos.x
+        && game->snake.head_pos.y == game->apple.pos.y)
+        {
+            return true;
+        }
+
+    return false;
 }
 
 void
@@ -53,25 +80,28 @@ move_snake (Game_Ctx *game)
 }
 
 void
-draw_snake(Game_Ctx *game)
+draw_snake (Game_Ctx *game)
 {
-    if (game->apple_present) {
-        /* draw background-colored rect at tail's location if an apple was 
-         * not eaten last turn*/
-    }
+    if (game->apple.is_present)
+        {
+            /* draw background-colored rect at tail's location if an apple was
+             * not eaten last turn*/
+        }
 
-    DrawRectangleV (game.snake.head_pos, game.snake.body_segment_size,
+    DrawRectangleV (game->snake.head_pos, game->snake.body_segment_size,
                     GREEN);
 }
 
 int
 main (void)
 {
+    srand (time (NULL));
     const int screenWidth = 500;
     const int screenHeight = 500;
 
-    Snake snake = { { 200, 200 }, { CELL_SIZE, CELL_SIZE }, 1};
-    Game_Ctx game = { 0, 0, snake, false};
+    Apple apple = { { 0, 0 }, false };
+    Snake snake = { { 200, 200 }, { CELL_SIZE, CELL_SIZE }, 1 };
+    Game_Ctx game = { 0, 0, snake, apple };
 
     InitWindow (PLAY_SIZE, PLAY_SIZE, "Snake!");
     SetTargetFPS (60);
@@ -84,7 +114,12 @@ main (void)
              * we apply that to snake input, check of wrapping, and continue
              * from there
              * After we draw, we check if we are on top of an apple, and if
-             * we are then we extend body on next move*/
+             * we are then we extend body on next move
+             * Make sure we draw apple first, and then snake, so if snake moves
+             * over apple that take priority*/
+
+            if (!game.apple.is_present)
+                gen_apple (&game);
 
             game.frame_count = (game.frame_count + 1) % 60;
             if (game.frame_count == 0 || game.frame_count == 30)
@@ -111,10 +146,15 @@ main (void)
 
             DrawText (buff, 10, 10, 10, WHITE); // Debugging text
 
+            DrawRectangleV (game.apple.pos, game.snake.body_segment_size, RED);
+
             DrawRectangleV (game.snake.head_pos, game.snake.body_segment_size,
                             GREEN);
 
             EndDrawing (); /* DRAWING END */
+
+            if (has_eaten (&game))
+                game.apple.is_present = false;
         }
 
     CloseWindow ();
