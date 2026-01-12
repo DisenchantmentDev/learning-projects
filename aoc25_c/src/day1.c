@@ -104,7 +104,7 @@ part2 (Combination *combo)
                 {
                     int divisions = n / 100;
                     count += divisions;
-                    int m = ((n % 100) + 100) % 100; // mod (n, 100);
+                    int m = mod (n, 100);
                     if (temp + m >= 100)
                         count++;
                 }
@@ -112,8 +112,8 @@ part2 (Combination *combo)
                 {
                     int divisions = -n / -100;
                     count += divisions;
-                    int m = ((n % 100) + 100) % 100; // mod (n, 100);
-                    if (temp != 0 && temp + m <= 0)
+                    int m = mod (n, -100);
+                    if (temp != 0 && temp - m <= 0)
                         count++;
                 }
             if (i < 110)

@@ -1,6 +1,5 @@
 /compiler-plO/lbuild/*
 /compiler-plO/compile_commands.json
-/compiler-plO/.clang-format
 /compiler-plO/pl0c
 /compiler-plO/.cache/*
 /compiler-plO/.ccls-cache/*
@@ -8,3 +7,4 @@
 /zig-emu/zig-out/*
 /sleep/sleep
 /*/.clang-format
+/snake/raylib/
