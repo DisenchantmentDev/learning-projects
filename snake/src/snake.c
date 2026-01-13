@@ -7,11 +7,37 @@
 #define PLAY_SIZE 500
 #define CELL_SIZE 20.0
 
+#define da_append(xs, x)                                                      \
+    do                                                                        \
+        {                                                                     \
+            if ((xs)->count >= (xs)->capacity)                                \
+                {                                                             \
+                    if ((xs)->capacity == 0)                                  \
+                        (xs)->capacity = 256;                                 \
+                    else                                                      \
+                        (xs)->capacity *= 2;                                  \
+                    (xs)->items = realloc (                                   \
+                        (xs)->items, (xs)->capacity * sizeof (*(xs)->items)); \
+                }                                                             \
+            (xs)->items[(xs)->count++] = (x);                                 \
+        }                                                                     \
+    while (0)
+
+typedef struct
+{
+    Vector2 *coords; // A list of coords RELATIVE TO HEAD POSITION
+    size_t count;
+    size_t capacity;
+    size_t front;
+    size_t rear;
+} SnakeBody;
+
 typedef struct
 {
     Vector2 head_pos;
     Vector2 body_segment_size;
-    int num_body_segments;
+    int num_body_segments; // number of body segments that isn't the head;
+    SnakeBody body;
     /* dynamic array that tracks body segments positions; deque?*/
 } Snake;
 
@@ -92,6 +118,11 @@ draw_snake (Game_Ctx *game)
                     GREEN);
 }
 
+void
+initialize_game (Game_Ctx *game)
+{
+}
+
 int
 main (void)
 {
@@ -100,8 +131,13 @@ main (void)
     const int screenHeight = 500;
 
     Apple apple = { { 0, 0 }, false };
-    Snake snake = { { 200, 200 }, { CELL_SIZE, CELL_SIZE }, 1 };
+    SnakeBody snake_body = { 0 };
+    snake_body.front = -1;
+    snake_body.rear = -1;
+    Snake snake = { { 200, 200 }, { CELL_SIZE, CELL_SIZE }, 1, snake_body };
     Game_Ctx game = { 0, 0, snake, apple };
+
+    initialize_game (&game);
 
     InitWindow (PLAY_SIZE, PLAY_SIZE, "Snake!");
     SetTargetFPS (60);
